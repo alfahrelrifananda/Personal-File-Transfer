@@ -1,63 +1,140 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Personal File Transfer
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A simple local network file transfer application built with Laravel. Transfer files securely between devices on your local network using IP addresses.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Upload and download files within your local network
+- Local network only - no internet required
+- Fast transfers over LAN
+- Web-based interface accessible from any device
+- Mobile-friendly design
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.1
+- Composer
+- Apache/Nginx web server
+- Local network connection
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/alfahrelrifananda/Personal-File-Transfer.git
+   cd laravel-test
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. **Install dependencies**
+   ```bash
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Set up environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Laravel Sponsors
+4. **Set permissions**
+   ```bash
+   sudo chown -R $USER:www-data storage bootstrap/cache
+   chmod -R 775 storage bootstrap/cache
+   chmod -R g+s storage bootstrap/cache
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. **Configure your web server** (Apache/Nginx) to point to the `public` directory
 
-### Premium Partners
+## Usage
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Access from Local Network
 
-## Contributing
+1. **Find your local IP address:**
+   ```bash
+   # Linux/Mac
+   ip addr show
+   # or
+   ifconfig
+   
+   # Windows
+   ipconfig
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Access the application:**
+   - From host machine: `http://localhost` or `http://127.0.0.1`
+   - From other devices: `http://YOUR_LOCAL_IP` (e.g., `http://192.168.1.100`)
 
-## Code of Conduct
+### Transferring Files
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Open the application in your browser
+2. Upload files from any device on your network
+3. Share the download link with other devices on the same network
+4. Files remain accessible until deleted
 
-## Security Vulnerabilities
+## Configuration
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Upload Limits
+
+Edit `php.ini` to increase upload size limits:
+
+```ini
+upload_max_filesize = 100M
+post_max_size = 100M
+max_execution_time = 300
+```
+
+### Storage Path
+
+Files are stored in `storage/app/` by default. You can modify the storage path in the application configuration.
+
+## Security Notes
+
+**Important:** This application is designed for LOCAL NETWORK USE ONLY.
+
+- Do not expose this application to the public internet
+- Only accessible within your local network (192.168.x.x, 10.x.x.x)
+- Consider setting up firewall rules if needed
+- No authentication by default - add authentication for shared networks
+
+## Troubleshooting
+
+### Permission Denied Errors
+
+```bash
+sudo chown -R $USER:www-data /srv/www/apache/laravel-test
+chmod -R 775 storage bootstrap/cache
+```
+
+### Cannot Access from Other Devices
+
+- Verify devices are on the same network
+- Check firewall settings
+- Ensure Apache/Nginx is listening on `0.0.0.0` not just `127.0.0.1`
+
+### Upload Fails
+
+- Check PHP upload limits in `php.ini`
+- Verify storage directory permissions
+- Check available disk space
+
+## Development
+
+```bash
+# Run Laravel development server
+php artisan serve --host=0.0.0.0 --port=8000
+
+# Access from network
+http://YOUR_LOCAL_IP:8000
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Personal-File-Transfer-
-# Personal-File-Transfer-
+Open source - feel free to modify and use for personal purposes.
+
+## Contributing
+
+This is a personal project, but suggestions and improvements are welcome!
+
+---
+
+**Note:** Keep this application private and local. Never expose it to the public internet without proper security measures.
